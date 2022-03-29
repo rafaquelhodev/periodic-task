@@ -3,6 +3,8 @@ defmodule Calculator do
 
   alias Periodic
 
+  @freq 1000
+
   @doc """
   Starts the calculator.
   """
@@ -33,12 +35,12 @@ defmodule Calculator do
     result
   end
 
-  def add_periodic(server, num) do
+  def add_periodic(server, num, freq \\ @freq) do
     {:ok, pid} = Periodic.start_link([])
 
     callback = fn -> add(server, num) end
 
-    Periodic.retry(pid, %Periodic{freq: 1000, callback: callback})
+    Periodic.retry(pid, %Periodic{freq: freq, callback: callback})
   end
 
   def see_result(server) do

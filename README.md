@@ -1,21 +1,26 @@
-# Retry
+# Periodic-task
 
-**TODO: Add description**
+This is a simple example where a periodic task is created with the aid of Elixir OTP.
 
-## Installation
+## Usage
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `retry` to your list of dependencies in `mix.exs`:
-
-```elixir
-def deps do
-  [
-    {:retry, "~> 0.1.0"}
-  ]
-end
+```sh
+iex -S mix
 ```
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at <https://hexdocs.pm/retry>.
+```elixir
+import Calculator
 
+{:ok, pid} = Calculator.start_link([])
+
+Calculator.add_periodic(pid, 2)
+```
+
+And voila, we'll see something like this:
+```sh
+2
+4
+6
+8
+...
+```

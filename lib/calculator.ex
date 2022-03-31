@@ -1,7 +1,9 @@
 defmodule Calculator do
   use GenServer
 
-  alias Retry
+  alias Periodic
+
+  @freq 1000
 
   @doc """
   Starts the calculator.
@@ -17,8 +19,8 @@ defmodule Calculator do
   end
 
   @impl true
-  def handle_call({:lookup, name}, _from, names) do
-    {:reply, Map.fetch(names, name), names}
+  def handle_call({:lookup}, _from, state) do
+    {:reply, state, state}
   end
 
   @impl true
@@ -33,11 +35,15 @@ defmodule Calculator do
     result
   end
 
-  def add_periodic(server, num) do
-    {:ok, pid} = Retry.start_link([])
+  def add_periodic(server, num, freq \\ @freq) do
+    {:ok, pid} = Periodic.start_link([])
 
     callback = fn -> add(server, num) end
 
-    Retry.retry(pid, %{freq: 1000, callback: callback})
+    Periodic.retry(pid, %Periodic{freq: freq, callback: callback})
+  end
+
+  def see_result(server) do
+    GenServer.call(server, {:lookup})
   end
 end

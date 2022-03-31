@@ -1,5 +1,7 @@
-defmodule Retry do
+defmodule Periodic do
   use GenServer
+
+  defstruct freq: nil, server: nil, callback: nil
 
   def start_link(opts) do
     GenServer.start_link(__MODULE__, :ok, opts)
@@ -11,7 +13,7 @@ defmodule Retry do
   end
 
   @impl true
-  def handle_call({:retry, data}, _from, state) do
+  def handle_call({:periodic, data}, _from, state) do
     Process.send_after(data.server, {:tick, data}, data.freq)
 
     {:reply, data, state}
@@ -35,6 +37,6 @@ defmodule Retry do
 
   def retry(server, data) do
     data = Map.put(data, :server, server)
-    GenServer.call(data.server, {:retry, data})
+    GenServer.call(data.server, {:periodic, data})
   end
 end
